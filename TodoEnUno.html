@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8; /* Color de fondo suave */
+        }
+
+        header {
+            background-color: #003366; /* Azul oscuro */
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .nav-link.active {
+            background-color: #00509e; /* Azul más brillante para el enlace activo */
+            border-radius: 5px;
+        }
+
+        main {
+            margin-top: 20px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .alert-warning {
+            background-color: #d0e6f3; /* Azul claro para advertencias */
+            color: #003366; /* Azul oscuro para texto */
+            border-color: #b0c8e0;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .form-control {
+            width: 100%; /* Ajusta al ancho del contenedor */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #00509e; /* Azul más brillante */
+            border-color: #00509e;
+        }
+
+        .btn-primary:hover {
+            background-color: #003d72; /* Azul más oscuro en hover */
+            border-color: #003d72;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .btn-group a {
+            flex: 1;
+            margin: 0 5px;
+            text-align: center;
+            font-size: 14px;
+            color: #00509e; /* Color de los enlaces */
+        }
+
+        .d-flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+        }
+
+        .result-item i {
+            margin-right: 10px;
+            color: #00509e; /* Color de los iconos Font Awesome */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .form-group input {
+            flex: 1;
+        }
+
+        .form-group .btn {
+            flex: 0 0 auto;
+            margin-left: 10px;
+        }
+		/* CSS General */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+header {
+    background-color: #004085;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+nav {
+    margin-bottom: 1rem;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1rem;
+}
+
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
+
+.container {
+    max-width: 960px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.hidden * {
+    display: none !important;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-info .btn {
+    margin-right: 0.5rem;
+}
+
+/* Estilos para los resultados */
+.result-container {
+    border: 1px solid #ddd;
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+}
+
+.result-item {
+    margin-bottom: 1rem;
+}
+
+.result-item i {
+    margin-right: 0.5rem;
+}
+
+#archivos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+#archivos-container .btn {
+    width: 100%;
+}
+
+/* Estilos adicionales */
+#estado-selector,
+#municipio-selector,
+#parroquia-selector,
+#centro-selector {
+    max-width: 300px;
+}
+
+#cedulaInput {
+    max-width: 300px;
+}
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Actas Electorales y Consulta de Cédula</title>
+    <!-- Importación de CSS externos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+</head>
+<body>
+    <header class="bg-dark text-white text-center py-3">
+        <h1 class="animate__animated animate__fadeInDown">
+            <i class="fas fa-clipboard-list"></i> Visualización de Actas Electorales y Consulta de Cédula
+        </h1>
+    </header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="showSection('actas')">
+                        <i class="fas fa-file-alt"></i> Actas Electorales
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="showSection('cedula')">
+                        <i class="fas fa-id-card"></i> Consulta de Cédula
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main class="container mt-4">
+        <div id="actas" class="section active">
+            <div class="mb-3">
+                <label for="estado-selector" class="form-label">Estado:</label>
+                <select id="estado-selector" class="form-select" onchange="cargarMunicipios(this.value)">
+                    <option value="">Selecciona un Estado</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="municipio-selector" class="form-label">Municipio:</label>
+                <select id="municipio-selector" class="form-select" onchange="cargarParroquias(this.value)">
+                    <option value="">Selecciona un Municipio</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="parroquia-selector" class="form-label">Parroquia:</label>
+                <select id="parroquia-selector" class="form-select" onchange="cargarCentros(this.value)">
+                    <option value="">Selecciona una Parroquia</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="centro-selector" class="form-label">Centro de Votación:</label>
+                <select id="centro-selector" class="form-select" onchange="cargarArchivos(this.value)">
+                    <option value="">Selecciona un Centro de Votación</option>
+                </select>
+            </div>
+            <div id="archivos-container" class="row"></div>
+            <div id="mensaje-container" class="alert alert-warning mt-3" style="display: none;"></div>
+			   <script>
+        let datos = {};
+
+        fetch('datos.json')
+            .then(response => response.json())
+            .then(data => {
+                datos = data;
+                cargarEstados();
+            });
+
+        function cargarEstados() {
+            const estadoSelector = document.getElementById('estado-selector');
+            for (const estado in datos) {
+                const option = document.createElement('option');
+                option.value = estado;
+                option.textContent = estado;
+                estadoSelector.appendChild(option);
+            }
+        }
+
+        function cargarMunicipios(estado) {
+            const municipioSelector = document.getElementById('municipio-selector');
+            municipioSelector.innerHTML = '<option value="">Selecciona un Municipio</option>';
+            const parroquiaSelector = document.getElementById('parroquia-selector');
+            parroquiaSelector.innerHTML = '<option value="">Selecciona una Parroquia</option>';
+            const centroSelector = document.getElementById('centro-selector');
+            centroSelector.innerHTML = '<option value="">Selecciona un Centro de Votación</option>';
+            document.getElementById('archivos-container').innerHTML = '';
+            document.getElementById('mensaje-container').style.display = 'none';
+
+            if (estado) {
+                for (const municipio in datos[estado]) {
+                    const option = document.createElement('option');
+                    option.value = municipio;
+                    option.textContent = municipio;
+                    municipioSelector.appendChild(option);
+                }
+            }
+        }
+
+        function cargarParroquias(municipio) {
+            const estado = document.getElementById('estado-selector').value;
+            const parroquiaSelector = document.getElementById('parroquia-selector');
+            parroquiaSelector.innerHTML = '<option value="">Selecciona una Parroquia</option>';
+            const centroSelector = document.getElementById('centro-selector');
+            centroSelector.innerHTML = '<option value="">Selecciona un Centro de Votación</option>';
+            document.getElementById('archivos-container').innerHTML = '';
+            document.getElementById('mensaje-container').style.display = 'none';
+
+            if (municipio) {
+                for (const parroquia in datos[estado][municipio]) {
+                    const option = document.createElement('option');
+                    option.value = parroquia;
+                    option.textContent = parroquia;
+                    parroquiaSelector.appendChild(option);
+                }
+            }
+        }
+
+        function cargarCentros(parroquia) {
+            const estado = document.getElementById('estado-selector').value;
+            const municipio = document.getElementById('municipio-selector').value;
+            const centroSelector = document.getElementById('centro-selector');
+            centroSelector.innerHTML = '<option value="">Selecciona un Centro de Votación</option>';
+            document.getElementById('archivos-container').innerHTML = '';
+            document.getElementById('mensaje-container').style.display = 'none';
+
+            if (parroquia) {
+                for (const centro in datos[estado][municipio][parroquia]) {
+                    const option = document.createElement('option');
+                    option.value = centro;
+                    option.textContent = centro;
+                    centroSelector.appendChild(option);
+                }
+            }
+        }
+
+        function cargarArchivos(centro) {
+            const estado = document.getElementById('estado-selector').value;
+            const municipio = document.getElementById('municipio-selector').value;
+            const parroquia = document.getElementById('parroquia-selector').value;
+            const archivosContainer = document.getElementById('archivos-container');
+            const mensajeContainer = document.getElementById('mensaje-container');
+            archivosContainer.innerHTML = '';
+            mensajeContainer.style.display = 'none';
+
+            if (centro) {
+                if (!verificarLimiteConsultas()) {
+                    mensajeContainer.innerHTML = '<p>Has consultado muchas actas, para protección del sistema limitamos la cantidad de consultas para evitar colapsarla, en 5 minutos podrás volver a consultar más.</p>';
+                    mensajeContainer.style.display = 'block';
+                    return;
+                }
+
+                const archivos = datos[estado][municipio][parroquia][centro];
+                archivos.forEach(archivo => {
+                    const img = document.createElement('img');
+                    img.src = `https://elecciones2024ve.s3.us-east-1.amazonaws.com/${archivo}`;
+                    img.alt = archivo;
+                    img.className = 'img-fluid col-md-3 acta-img';
+                    archivosContainer.appendChild(img);
+                });
+
+                registrarConsulta();
+            }
+        }
+
+        function verificarLimiteConsultas() {
+            const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+            const ahora = new Date().getTime();
+            const ventanaTiempo = 5 * 60 * 1000;
+            const consultasRecientes = consultas.filter(consulta => ahora - consulta < ventanaTiempo);
+
+            return consultasRecientes.length < 14;
+        }
+
+		function registrarConsulta() {
+			const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+			consultas.push(new Date().getTime());
+			localStorage.setItem('consultas', JSON.stringify(consultas));
+		}
+
+</script>
+        </div>
+        <div id="cedula" class="section">
+            <div class="result-container">
+                <form id="cedulaForm" class="form-group">
+                    <label for="cedulaInput" class="form-label">Cédula:</label>
+                    <input type="text" id="cedulaInput" class="form-control" required maxlength="10">
+                    <button type="submit" class="btn btn-primary mt-2">Consultar</button>
+                </form>
+                <div id="resultContainer" class="hidden mt-3">
+                    <h2>Resultados:</h2>
+                    <div class="result-item">
+                        <i class="fas fa-user"></i><strong>Nombre Completo:</strong> <span id="nombreCompleto"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-genderless"></i><strong>Género:</strong> <span id="genero"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-calendar-alt"></i><strong>Fecha de Nacimiento:</strong> <span id="fechaNacimiento"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-map-marker-alt"></i><strong>Estado:</strong> <span id="estado"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-map-marker"></i><strong>Municipio:</strong> <span id="municipio"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-map"></i><strong>Parroquia:</strong> <span id="parroquia"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-building"></i><strong>Centro de Votación:</strong> <span id="centroVotacion"></span>
+                    </div>
+                    <div class="result-item">
+                        <i class="fas fa-home"></i><strong>Dirección del Centro de Votación:</strong> <span id="direccionCentro"></span>
+                    </div>
+                    <a id="descargarActa" class="btn btn-success hidden mt-3" target="_blank">
+                        <i class="fas fa-download"></i> Descargar Acta
+                    </a>
+                    <div class="alert alert-info mt-4">
+                        <strong><i class="fas fa-info-circle"></i> VER LOS RESULTADOS DE:</strong>
+                        <div class="btn-group">
+                            <a href="#" id="btnEstado" class="btn btn-outline-primary" target="_blank">ESTADO</a>
+                            <a href="#" id="btnMunicipio" class="btn btn-outline-primary" target="_blank">MUNICIPIO</a>
+                            <a href="#" id="btnParroquia" class="btn btn-outline-primary" target="_blank">PARROQUIA</a>
+                            <a href="#" id="btnCentro" class="btn btn-outline-primary" target="_blank">TU CENTRO</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="mensaje-container" class="alert alert-warning mt-3 hidden"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Importación de JS externos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function fetchWithRetry(url, retries, delay) {
+            return new Promise((resolve, reject) => {
+                function attemptFetch(retriesLeft) {
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => resolve(data))
+                        .catch(error => {
+                            if (retriesLeft > 0) {
+                                setTimeout(() => attemptFetch(retriesLeft - 1), delay);
+                            } else {
+                                reject(error);
+                            }
+                        });
+                }
+                attemptFetch(retries);
+            });
+        }
+
+        document.getElementById('cedulaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const cedula = document.getElementById('cedulaInput').value.trim();
+            if (cedula === '') return;
+
+            const url = `https://gdp.theempire.tech/api/data?cdi=V${cedula}`;
+            console.log(`Consultando URL: ${url}`); // Depuración: Mostrar URL en consola
+
+            fetchWithRetry(url, 3, 200) // Reintentos: 3, Delay: 200ms
+                .then(data => {
+                    console.log('Datos recibidos:', data); // Depuración: Mostrar datos en consola
+
+                    if (data.Person && data.acta) {
+                        // Mostrar resultados
+                        document.getElementById('nombreCompleto').textContent = `${data.Person.RE_DS_FIRST_NAME} ${data.Person.RE_DS_SECOND_NAME} ${data.Person.RE_DS_FIRST_LASTNAME} ${data.Person.RE_DS_SECOND_LASTNAME}`;
+                        document.getElementById('genero').textContent = data.Person.RE_CD_GENDER === 'M' ? 'Masculino' : 'Femenino';
+                        document.getElementById('fechaNacimiento').textContent = new Date(data.Person.RE_DT_BIRTHDATE).toLocaleDateString('es-ES');
+                        document.getElementById('estado').textContent = data.Person.ST_DS_STATE;
+                        document.getElementById('municipio').textContent = data.Person.MU_DS_MUN;
+                        document.getElementById('parroquia').textContent = data.Person.PA_DS_PAR;
+                        document.getElementById('centroVotacion').textContent = data.Person.PC_DS_CENTER;
+                        document.getElementById('direccionCentro').textContent = data.Person.PC_DS_ADDRESS;
+
+                        // Configurar enlace para descargar acta
+                        const actaUrl = `https://elecciones2024ve.s3.us-east-1.amazonaws.com/${data.acta.DO_DS_NAME}`;
+                        const downloadLink = document.getElementById('descargarActa');
+                        downloadLink.href = actaUrl;
+                        downloadLink.download = data.acta.DO_DS_NAME; // Nombre del archivo para descargar
+                        downloadLink.classList.remove('hidden');
+
+                        // Verificar y configurar botones de resultados
+                        const estadoCode = data.acta.DO_CD_STATE;
+                        const municipioCode = data.acta.DO_CD_MUN;
+                        const parroquiaCode = data.acta.DO_CD_PAR;
+                        const centroCode = data.acta.DO_CD_CENTER;
+
+                        if (estadoCode && municipioCode && parroquiaCode && centroCode) {
+                            const estadoLink = `https://resultadosconvzla.com/estado/${estadoCode}`;
+                            const municipioLink = `https://resultadosconvzla.com/municipio/${municipioCode}`;
+                            const parroquiaLink = `https://resultadosconvzla.com/parroquia/${parroquiaCode}`;
+                            const centroLink = `https://resultadosconvzla.com/centro/${centroCode}`;
+
+                            document.getElementById('btnEstado').href = estadoLink;
+                            document.getElementById('btnEstado').textContent = `${data.Person.ST_DS_STATE}`;
+                            document.getElementById('btnMunicipio').href = municipioLink;
+                            document.getElementById('btnMunicipio').textContent = `${data.Person.MU_DS_MUN}`;
+                            document.getElementById('btnParroquia').href = parroquiaLink;
+                            document.getElementById('btnParroquia').textContent = `${data.Person.PA_DS_PAR}`;
+                            document.getElementById('btnCentro').href = centroLink;
+                            document.getElementById('btnCentro').textContent = `${data.Person.PC_DS_CENTER}`;
+                        } else {
+                            console.warn('Faltan datos para los enlaces de resultados');
+                        }
+
+                        // Mostrar el contenedor de resultados
+                        document.getElementById('resultContainer').classList.remove('hidden');
+                    } else {
+                        alert('No se encontraron datos para la cédula proporcionada.');
+                        document.getElementById('resultContainer').classList.add('hidden');
+                        console.log('Estructura de datos inesperada:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al consultar la API:', error);
+                    alert('Ocurrió un error al consultar la API. Intenta de nuevo.');
+                });
+        });
+
+        // Permitir consulta al presionar Enter
+        document.getElementById('cedulaInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('cedulaForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html> 
+	

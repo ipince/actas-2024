@@ -17,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var resultsFile = "resultados.csv"
+var resultsFile = "resultados_full.csv"
 
 func main() {
 	filenames, err := processed(resultsFile)
@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	results, err := processDir(filenames, "../actas", resultsFile)
+	results, err := processDir(filenames, "../actas_full", resultsFile)
 	if err != nil {
 		panic(err)
 	}
@@ -182,8 +182,11 @@ var ballotOrder = []Option{
 }
 
 type Result struct {
-	ActaCode     string
 	ActaFilename string
+
+	ActaCode   string
+	CenterCode string
+	Table      string
 
 	ValidVotes   int
 	NullVotes    int
@@ -201,7 +204,7 @@ func (r *Result) candidateTotals() map[string]int {
 }
 
 func (r *Result) header() []string {
-	return []string{"acta", "codigo", "maduro", "edmundo", "otros", "total_validos", "total_nulo", "total_invalido"}
+	return []string{"acta", "codigo", "centro", "mesa", "maduro", "edmundo", "martinez", "bertucci", "brito", "ecarri", "fermin", "ceballos", "marquez", "conde_pajuo", "total_validos", "total_nulo", "total_invalido"}
 }
 
 func (r *Result) asRow() []string {
@@ -209,12 +212,29 @@ func (r *Result) asRow() []string {
 	totals := r.candidateTotals()
 	nmm := totals[candidateMaduro]
 	egu := totals[candidateGonzalez]
+	lm := totals[candidateMartinez]
+	jber := totals[candidateBertucci]
+	jb := totals[candidateBrito]
+	ae := totals[candidateEcarri]
+	cf := totals[candidateFermin]
+	dc := totals[candidateCeballos]
+	em := totals[candidateMarquez]
+	ecp := totals[candidateRausseo]
 	return []string{
 		r.ActaFilename,
 		r.ActaCode,
+		r.CenterCode,
+		r.Table,
 		strconv.Itoa(nmm),
 		strconv.Itoa(egu),
-		strconv.Itoa(r.ValidVotes - nmm - egu),
+		strconv.Itoa(lm),
+		strconv.Itoa(jber),
+		strconv.Itoa(jb),
+		strconv.Itoa(ae),
+		strconv.Itoa(cf),
+		strconv.Itoa(dc),
+		strconv.Itoa(em),
+		strconv.Itoa(ecp),
 		strconv.Itoa(r.ValidVotes),
 		strconv.Itoa(r.NullVotes),
 		strconv.Itoa(r.InvalidVotes),
@@ -265,6 +285,10 @@ func parse(filename, data string) (*Result, error) {
 	}
 
 	actaCode := parts[0] // 110601011.04.1.0001 (first part is the voting center code)
+	actaCodeParts := strings.Split(actaCode, ".")
+	centerCode := actaCodeParts[0]
+	table := actaCodeParts[1]
+
 	validVotes := parts[1]
 	nullVotes, err := strconv.Atoi(parts[2])
 	if err != nil {
@@ -282,6 +306,8 @@ func parse(filename, data string) (*Result, error) {
 
 	result := &Result{
 		ActaCode:     actaCode,
+		CenterCode:   centerCode,
+		Table:        table,
 		ActaFilename: filename,
 		NullVotes:    nullVotes,
 		InvalidVotes: invalidVotes,
